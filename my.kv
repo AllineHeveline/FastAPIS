@@ -1,0 +1,178 @@
+#:kivy 2.3.0
+
+# Definições de cores e fontes
+#:set background_color (33/255, 33/255, 33/255, 1) # Cinza escuro
+#:set primary_color (3/255, 169/255, 244/255, 1) # Azul
+#:set text_color (255/255, 255/255, 255/255, 1) # Branco
+#:set secondary_text_color (200/255, 200/255, 200/255, 1) # Cinza claro
+#:set input_bg_color (48/255, 48/255, 48/255, 1) # Cinza mais claro
+
+# Estilo base para os botões
+<ModernButton@Button>:
+    background_color: (0,0,0,0)
+    background_normal: ''
+    font_size: '15sp'
+    color: text_color
+    size_hint_y: None
+    height: '48dp'
+    canvas.before:
+        Color:
+            rgba: primary_color
+        RoundedRectangle:
+            size: self.size
+            pos: self.pos
+            radius: [24]
+
+<ModernTextInput@TextInput>:
+    background_normal: 'atlas://data/images/defaulttheme/textinput'
+    background_active: 'atlas://data/images/defaulttheme/textinput_active'
+    background_color: input_bg_color
+    foreground_color: text_color
+    font_size: '15sp'
+    size_hint_y: None
+    height: '48dp'
+    padding: [15, (self.height - self.line_height) / 2, 15, (self.height - self.line_height) / 2]
+    cursor_color: primary_color
+
+# Estilo para telas
+<Screen>:
+    canvas.before:
+        Color:
+            rgba: background_color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<LoginScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 40
+        spacing: 20
+
+        Label:
+            text: 'Bem-vindo!'
+            font_size: '32sp'
+            size_hint_y: None
+            height: self.texture_size[1]
+            color: text_color
+
+        ModernTextInput:
+            id: login_user
+            hint_text: 'Usuário'
+            multiline: False
+
+        ModernTextInput:
+            id: login_password
+            hint_text: 'Senha'
+            password: True
+            multiline: False
+
+        BoxLayout:
+            size_hint_y: None
+            height: '48dp'
+            spacing: 10
+            ModernButton:
+                text: 'Login'
+                on_press: root.do_login(login_user.text, login_password.text)
+            ModernButton:
+                text: 'Registrar'
+                on_press: root.do_register(login_user.text, login_password.text)
+
+<HomeScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 40
+        spacing: 20
+
+        Label:
+            text: 'Painel Principal'
+            font_size: '32sp'
+            size_hint_y: None
+            height: self.texture_size[1]
+            color: text_color
+
+        Label:
+            id: total_saved_label
+            text: 'Saldo Total: R$ 0,00'
+            font_size: '24sp'
+            color: secondary_text_color
+
+        ModernButton:
+            text: 'Minhas Metas'
+            on_press: root.manager.current = 'goals'
+
+        ModernButton:
+            text: 'Ver Progresso'
+            on_press: root.manager.current = 'progress_view'
+
+        ModernButton:
+            text: 'Sair'
+            on_press: root.manager.current = 'login'
+
+<GoalsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 40
+        spacing: 10
+
+        Label:
+            text: 'Minhas Metas'
+            font_size: '32sp'
+            size_hint_y: None
+            height: self.texture_size[1]
+            padding: [0, 20]
+            color: text_color
+
+        ScrollView:
+            GridLayout:
+                id: goals_list
+                cols: 1
+                spacing: 10
+                size_hint_y: None
+                height: self.minimum_height
+
+        BoxLayout:
+            size_hint_y: None
+            height: '48dp'
+            spacing: 10
+            ModernTextInput:
+                id: goal_name
+                hint_text: 'Nome da Meta'
+            ModernTextInput:
+                id: goal_amount
+                hint_text: 'Valor (R$)'
+                input_filter: 'float'
+            ModernButton:
+                text: 'Adicionar'
+                size_hint_x: 0.3
+                on_press: root.add_goal(goal_name.text, goal_amount.text)
+
+        ModernButton:
+            text: 'Voltar'
+            on_press: root.manager.current = 'home'
+
+<ProgressViewScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 40
+        spacing: 10
+
+        Label:
+            text: 'Progresso das Metas'
+            font_size: '32sp'
+            size_hint_y: None
+            height: self.texture_size[1]
+            padding: [0, 20]
+            color: text_color
+
+        ScrollView:
+            GridLayout:
+                id: progress_list
+                cols: 1
+                spacing: 20
+                size_hint_y: None
+                height: self.minimum_height
+
+        ModernButton:
+            text: 'Voltar'
+            on_press: root.manager.current = 'home'
